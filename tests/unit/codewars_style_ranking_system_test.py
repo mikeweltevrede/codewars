@@ -90,7 +90,7 @@ class TestUser:
     def test_inc_rank_can_increases_neg5_to_5(self):
         user = User()
         user.rank = -5
-        user.progress = 10 * user.max_progress
+        user.progress = 9 * user.max_progress
 
         user.inc_rank()
         assert user.rank == 5
@@ -275,6 +275,7 @@ class TestUseCasesCodewars:
             (-8, -5, -8, 90),
             (-8, -4, -7, 60),
             (8, 8, 8, 0),
+            (-8, 4, 5, 10),
         ],
     )
     def test_simple_use_cases_provided_by_code_wars(

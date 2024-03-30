@@ -104,10 +104,10 @@ class User:
         :param rank_activity: Rank of the completed activity.
         """
         print(f"Start: {self.rank=}, {self.progress=}, {rank_activity=}")
+        self.validate_rank(rank=rank_activity)
+
         if self.rank == self.max_rank:
             return
-
-        self.validate_rank(rank=rank_activity)
 
         rank_difference = self._difference_to_user_rank(rank=rank_activity)
 
@@ -145,7 +145,7 @@ class User:
 
         self.progress = remainder_progress
 
-        if self.rank + rank_increases == 0:
+        if self.rank < 0 <= self.rank + rank_increases:
             self.rank += rank_increases + 1
         else:
             self.rank += rank_increases
