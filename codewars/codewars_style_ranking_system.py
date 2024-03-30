@@ -61,6 +61,13 @@ class User:
         """The user's rank in the system."""
         return self._rank
 
+    @rank.setter
+    def rank(self, value: int) -> None:
+        if value not in range(-8, 9) or value == 0:
+            raise ValueError(f"Rank must be between -8 and 8 (0 excluded) but was {value}")
+
+        self._rank = value
+
     @property
     def progress(self) -> int:
         """The user's progress within their rank."""
