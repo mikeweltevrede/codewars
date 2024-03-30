@@ -68,10 +68,10 @@ class TestUser:
         user.inc_rank()
         assert user.rank == 1
 
-    def test_inc_rank_increases_neg5_to_5(self):
+    def test_inc_rank_can_increases_neg5_to_5(self):
         user = User()
         user.rank = -5
-        user.progress = user.max_progress
+        user.progress = 10 * user.max_progress
 
         user.inc_rank()
         assert user.rank == 5
@@ -194,3 +194,43 @@ class TestUser:
             ValueError, match="Progress acceleration only possible for activities ranked higher than user's rank."
         ):
             user._progress_increase_with_rank_acceleration(rank_activity=4)
+
+
+class TestUseCasesCodewars:
+    @pytest.mark.parametrize(
+        ("rank_user", "rank_activity", "expected_rank", "expected_progress"),
+        [
+            (-8, -8, -8, 3),
+            (-8, -7, -8, 10),
+            (-8, -5, -8, 90),
+            (-8, -4, -7, 60),
+        ],
+    )
+    def test_simple_use_cases_provided_by_code_wars(
+        self, rank_user: int, rank_activity: int, expected_rank: int, expected_progress: int
+    ):
+        user = User()
+        user.rank = rank_user
+        user.inc_progress(rank_activity=rank_activity)
+
+        assert user.rank == expected_rank
+        assert user.progress == expected_progress
+
+    def test_multiple_calls_with_large_distance(self):
+        user = User()
+        user.inc_progress(rank_activity=1)
+        assert user.rank == -2
+        assert user.progress == 40
+
+        user.inc_progress(rank_activity=1)
+        assert user.rank == -2
+        assert user.progress == 80
+
+    def test_multiple_calls_at_max_rank(self):
+        user = User()
+        user.rank = 8
+        user.inc_progress(rank_activity=1)
+        assert user.rank == 8
+
+        user.inc_progress(rank_activity=2)
+        assert user.rank == 8
