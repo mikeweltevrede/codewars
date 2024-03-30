@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 
 from codewars.codewars_style_ranking_system import User
@@ -41,3 +43,51 @@ class TestUser:
 
         user.inc_progress(rank_activity=-8)
         assert user.progress == 0
+
+    def test_completing_activity_with_higher_rank_as_user_adds_accelerated_progress(self):
+        user = User()
+        user.rank = 2
+        user._progress_increase_with_rank_acceleration = mock.Mock(return_value=42)
+
+        user.inc_progress(rank_activity=4)
+        assert user.progress == 42
+
+    @pytest.mark.parametrize(
+        ("rank_user", "rank_activity", "expected"),
+        [
+            (-8, -7, 10),
+            (-8, -6, 40),
+            (-8, -5, 90),
+            (-8, -4, 160),
+            (-1, 1, 10),
+            (-2, 2, 90),
+        ],
+    )
+    def test__progress_increase_with_rank_acceleration_returns_10_times_difference_squared(
+        self, rank_user: int, rank_activity: int, expected: int
+    ):
+        """Requirements as provided in the kata description.
+
+        - If a user ranked -8 completes an activity ranked -7 they will receive 10 progress
+        - If a user ranked -8 completes an activity ranked -6 they will receive 40 progress
+        - If a user ranked -8 completes an activity ranked -5 they will receive 90 progress
+        - If a user ranked -8 completes an activity ranked -4 they will receive 160 progress, resulting in the user
+          being upgraded to rank -7 and having earned 60 progress towards their next rank
+        - If a user ranked -1 completes an activity ranked 1 they will receive 10 progress (remember, zero rank is
+          ignored)
+        """
+        user = User()
+        user.rank = rank_user
+
+        actual = user._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
+
+        assert actual == expected
+
+    def test__progress_increase_with_rank_acceleration_raises_value_error_if_rank_of_user_is_above_rank_activity(self):
+        user = User()
+        user.rank = 5
+
+        with pytest.raises(
+            ValueError, match="Progress acceleration only possible for activities ranked higher than user's rank."
+        ):
+            user._progress_increase_with_rank_acceleration(rank_activity=4)

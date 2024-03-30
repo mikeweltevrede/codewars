@@ -78,9 +78,38 @@ class User:
         self._progress = value
 
     def inc_progress(self, rank_activity: int) -> None:
-        """Increase the progress based on the rank of the activity compared to the user's rank."""
-        if rank_activity == self.rank:
-            self.progress += 3
+        """Increase the progress based on the rank of the activity compared to the user's rank.
 
-        elif rank_activity == self.rank - 1:
+        :param rank_activity: Rank of the completed activity.
+        """
+        if rank_activity <= self.rank - 2:
+            return
+
+        if rank_activity == self.rank - 1:
             self.progress += 1
+        elif rank_activity == self.rank:
+            self.progress += 3
+        else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
+            self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
+
+    def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:
+        """Formula to compute rank increase for completion of tasks higher than the user's current rank.
+
+        Completing an activity ranked higher than the current user's rank will accelerate the rank progression. The
+        greater the difference between rankings the more the progression will be increased. The formula is 10 * d * d
+        where d equals the difference in ranking between the activity and the user.
+
+        :param rank_activity: Rank of the completed activity.
+        :return: How much the progress increases.
+        """
+        if self.rank >= rank_activity:
+            raise ValueError("Progress acceleration only possible for activities ranked higher than user's rank.")
+
+        difference = rank_activity - self.rank
+
+        if self.rank < 0 < rank_activity:
+            # 0 is not a valid rank. As such, if the sign changes, we have to subtract it.
+            # TODO: Perhaps this can be done better... E.g. maintaining valid ranks somewhere else
+            difference -= 1
+
+        return 10 * difference**2
