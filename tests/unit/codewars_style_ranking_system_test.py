@@ -37,6 +37,13 @@ class TestUser:
         user.inc_progress(rank_activity=-8)
         assert user.progress == 1
 
+    def test_inc_progress_with_one_rank_lower_as_user_adds_1_progress_for_rank_1(self):
+        user = User()
+        user.rank = 1
+
+        user.inc_progress(rank_activity=-1)
+        assert user.progress == 1
+
     def test_inc_progress_with_more_than_one_rank_lower_as_user_adds_no_progress(self):
         user = User()
         user.rank = -6
@@ -97,14 +104,21 @@ class TestUser:
         user.inc_rank()
         assert user.rank == 4
 
-    def test_inc_rank_does_not_change_rank_and_progress_if_rank_is_maxed(self):
+    def test_inc_rank_does_not_change_rank_if_rank_is_maxed(self):
         user = User()
         user.rank = 8
         user.progress = 100
 
         user.inc_rank()
         assert user.rank == 8
-        assert user.progress == 100
+
+    def test_inc_rank_resets_progress_if_rank_is_maxed(self):
+        user = User()
+        user.rank = 8
+        user.progress = 100
+
+        user.inc_rank()
+        assert user.progress == 0
 
     def test_inc_rank_when_progress_is_equal_to_max_progress_resets_progress_to_0(self):
         user = User()
@@ -150,7 +164,7 @@ class TestUser:
         user.inc_rank()
         assert user.rank == user.max_rank
 
-    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_keeps_remaining_progress_after_increase(  # noqa: E501
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_drops_remaining_progress_after_increase(  # noqa: E501
         self,
     ):
         user = User()
@@ -158,7 +172,31 @@ class TestUser:
         user.progress = 342
 
         user.inc_rank()
-        assert user.progress == 142
+        assert user.progress == 0
+
+    @pytest.mark.parametrize(
+        ("rank_user", "rank_activity", "expected"),
+        [(5, 7, 2), (-7, -3, 4)],
+    )
+    def test__difference_to_user_rank_for_same_sign_returns_correct_value(
+        self, rank_user: int, rank_activity: int, expected: int
+    ):
+        user = User()
+        user.rank = rank_user
+
+        assert user._difference_to_user_rank(rank=rank_activity) == expected
+
+    @pytest.mark.parametrize(
+        ("rank_user", "rank_activity", "expected"),
+        [(-5, 7, 11), (-7, 3, 9), (-1, 1, 1)],
+    )
+    def test__difference_to_user_rank_for_differing_sign_returns_correct_value(
+        self, rank_user: int, rank_activity: int, expected: int
+    ):
+        user = User()
+        user.rank = rank_user
+
+        assert user._difference_to_user_rank(rank=rank_activity) == expected
 
     @pytest.mark.parametrize(
         ("rank_user", "rank_activity", "expected"),

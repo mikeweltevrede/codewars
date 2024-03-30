@@ -104,12 +104,14 @@ class User:
         """
         self.validate_rank(rank=rank_activity)
 
-        if rank_activity <= self.rank - 2:
+        rank_difference = self._difference_to_user_rank(rank=rank_activity)
+
+        if rank_difference <= -2:
             return
 
-        if rank_activity == self.rank - 1:
+        if rank_difference == -1:
             self.progress += 1
-        elif rank_activity == self.rank:
+        elif rank_difference == 0:
             self.progress += 3
         else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
             self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
@@ -118,15 +120,19 @@ class User:
 
     def inc_rank(self) -> None:
         """Increase the rank based on the collected progress."""
-        if self.progress < self.max_progress or self.rank == self.max_rank:
+        if self.progress < self.max_progress:
             # Note that the if-statement about progress can be considered obsolete because the calculations below with
             # modulus would lead to the same result. However, it is better to exit early.
+            return
+
+        if self.rank == self.max_rank:
+            self.progress = 0
             return
 
         rank_increases, remainder_progress = divmod(self.progress, self.max_progress)
 
         if rank_increases > self.max_rank_increases:
-            self.progress = remainder_progress + self.max_progress * (rank_increases - self.max_rank_increases)
+            self.progress = 0
             self.rank = self.max_rank
             return
 
@@ -136,6 +142,19 @@ class User:
             self.rank += rank_increases + 1
         else:
             self.rank += rank_increases
+
+    def _difference_to_user_rank(self, rank: int) -> int:
+        """Computes the number of ranks between `rank` and the user's rank.
+
+        :param rank: Rank to find the difference for.
+        :return: Difference between `rank` and the user's rank.
+        """
+        difference = rank - self.rank
+
+        if self.rank < 0 < rank:
+            # 0 is not a valid rank. As such, if the sign changes, we have to subtract one.
+            difference -= 1
+        return difference
 
     def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:
         """Formula to compute rank increase for completion of tasks higher than the user's current rank.
@@ -150,11 +169,5 @@ class User:
         if self.rank >= rank_activity:
             raise ValueError("Progress acceleration only possible for activities ranked higher than user's rank.")
 
-        difference = rank_activity - self.rank
-
-        if self.rank < 0 < rank_activity:
-            # 0 is not a valid rank. As such, if the sign changes, we have to subtract it.
-            # TODO: Perhaps this can be done better... E.g. maintaining valid ranks somewhere else
-            difference -= 1
-
+        difference = self._difference_to_user_rank(rank=rank_activity)
         return 10 * difference**2
