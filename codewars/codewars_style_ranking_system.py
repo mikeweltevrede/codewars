@@ -101,6 +101,8 @@ class User:
         else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
             self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
 
+        self.inc_rank()
+
     def inc_rank(self) -> None:
         """Increase the rank based on the collected progress."""
         if self.progress < self.max_progress or self.rank == self.max_rank:

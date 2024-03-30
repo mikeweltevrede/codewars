@@ -52,6 +52,14 @@ class TestUser:
         user.inc_progress(rank_activity=4)
         assert user.progress == 42
 
+    def test_inc_progress_calls_inc_rank(self):
+        user = User()
+        user._progress_increase_with_rank_acceleration = mock.Mock(return_value=42)
+        user.inc_rank = mock.Mock()
+
+        user.inc_progress(rank_activity=42)
+        user.inc_rank.assert_called_once()
+
     def test_inc_rank_when_progress_is_lower_than_max_progress_does_not_increase_rank(self):
         user = User()
         user.rank = 3
@@ -95,7 +103,7 @@ class TestUser:
 
     def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_raises_rank_by_multiple_levels_if_it_does_not_make_the_user_reach_max_rank(
         self,
-    ):  # noqa: E401
+    ):  # noqa: E501
         user = User()
         user.rank = 3
         user.progress = 242
@@ -105,7 +113,7 @@ class TestUser:
 
     def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_sets_progress_to_remainder_if_it_does_not_make_the_user_reach_max_rank(
         self,
-    ):  # noqa: E401
+    ):  # noqa: E501
         user = User()
         user.rank = 3
         user.progress = 242
@@ -123,7 +131,7 @@ class TestUser:
 
     def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_keeps_remaining_progress_after_increase(
         self,
-    ):  # noqa: E401
+    ):  # noqa: E501
         user = User()
         user.rank = user.max_rank - 2
         user.progress = 342
