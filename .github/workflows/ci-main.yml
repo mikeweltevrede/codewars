@@ -1,0 +1,16 @@
+name: ci-main
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  quality-checks:
+    uses: ./.github/workflows/quality-checks.yml
+    with:
+      pre-commit-skip: 'SKIP=no-commit-to-branch'
+
+  test:
+    uses: ./.github/workflows/unit-and-doc-tests.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -1,0 +1,15 @@
+name: branch-naming-rules
+
+on:
+  pull_request:
+    types: [opened,synchronize,reopened]
+
+jobs:
+  branch-naming-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: deepakputhraya/action-branch-name@master
+        with:
+          regex: '(([\w-]?)+\/dev)|(pre-commit-ci-update-config)' # Regex the branch should match
+          allowed_prefixes: 'feature,fix,hotfix,test' # All branches should start with the given prefix
+          ignore: main # Ignore exactly matching branch names from convention

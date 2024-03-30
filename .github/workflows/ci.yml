@@ -1,0 +1,15 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened,synchronize,reopened]
+
+jobs:
+  quality-checks:
+    uses: ./.github/workflows/quality-checks.yml
+
+  test:
+    uses: ./.github/workflows/unit-and-doc-tests.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
