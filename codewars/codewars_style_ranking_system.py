@@ -67,9 +67,7 @@ class User:
 
     @rank.setter
     def rank(self, value: int) -> None:
-        if value not in range(self.min_rank, self.max_rank + 1) or value == 0:
-            raise ValueError(f"Rank must be between {self.min_rank} and {self.max_rank} (0 excluded) but was {value}")
-
+        self.validate_rank(rank=value)
         self._rank = value
 
     @property
@@ -86,11 +84,26 @@ class User:
         """Number of ranks that the user can still increase."""
         return self.max_rank - self.rank
 
+    @property
+    def valid_ranks(self) -> list[int]:
+        """Ranks that can be used for the user or activities."""
+        return [rank for rank in range(self.min_rank, self.max_rank + 1) if rank != 0]
+
+    def validate_rank(self, rank: int) -> None:
+        """Validate the value of `rank` versus the `valid_ranks` property.
+
+        :param rank: Rank to validate.
+        """
+        if rank not in self.valid_ranks:
+            raise ValueError(f"Rank must be in {self.valid_ranks} but was {rank}")
+
     def inc_progress(self, rank_activity: int) -> None:
         """Increase the progress based on the rank of the activity compared to the user's rank.
 
         :param rank_activity: Rank of the completed activity.
         """
+        self.validate_rank(rank=rank_activity)
+
         if rank_activity <= self.rank - 2:
             return
 

@@ -13,15 +13,15 @@ class TestUser:
         assert User().progress == 0
 
     def test_rank_cannot_be_0(self):
-        with pytest.raises(ValueError, match="Rank must be between -8 and 8"):
+        with pytest.raises(ValueError, match="Rank must be in"):
             User().rank = 0
 
     def test_rank_cannot_be_lower_than_neg8(self):
-        with pytest.raises(ValueError, match="Rank must be between -8 and 8"):
+        with pytest.raises(ValueError, match="Rank must be in"):
             User().rank = -9
 
     def test_rank_cannot_be_higher_than_8(self):
-        with pytest.raises(ValueError, match="Rank must be between -8 and 8"):
+        with pytest.raises(ValueError, match="Rank must be in"):
             User().rank = 9
 
     def test_inc_progress_with_same_rank_as_user_adds_3_progress(self):
@@ -57,8 +57,13 @@ class TestUser:
         user._progress_increase_with_rank_acceleration = mock.Mock(return_value=42)
         user.inc_rank = mock.Mock()
 
-        user.inc_progress(rank_activity=42)
+        user.inc_progress(rank_activity=-5)
         user.inc_rank.assert_called_once()
+
+    def test_inc_progress_raises_valueerror_for_invalid_rank(self):
+        user = User()
+        with pytest.raises(ValueError, match="Rank must be in"):
+            user.inc_progress(rank_activity=-9)
 
     def test_inc_rank_increases_neg1_to_1(self):
         user = User()
