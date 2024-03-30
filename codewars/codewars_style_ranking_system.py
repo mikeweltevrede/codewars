@@ -48,6 +48,7 @@ Code Usage Examples:
 Note: Codewars no longer uses this algorithm for its own ranking system. It uses a pure Math based solution that gives
 consistent results no matter what order a set of ranked activities are completed at.
 """
+from typing import Optional
 
 
 class User:
@@ -118,7 +119,7 @@ class User:
         elif rank_difference == 0:
             self.progress += 3
         else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
-            self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
+            self.progress += self._progress_increase_with_rank_acceleration(rank_difference=rank_difference)
 
         print(f"Mid: {self.rank=}, {self.progress=}, {rank_activity=}")
         self.inc_rank()
@@ -164,7 +165,9 @@ class User:
             difference += 1
         return difference
 
-    def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:
+    def _progress_increase_with_rank_acceleration(
+        self, rank_activity: Optional[int] = None, rank_difference: Optional[int] = None
+    ) -> int:
         """Formula to compute rank increase for completion of tasks higher than the user's current rank.
 
         Completing an activity ranked higher than the current user's rank will accelerate the rank progression. The
@@ -172,10 +175,18 @@ class User:
         where d equals the difference in ranking between the activity and the user.
 
         :param rank_activity: Rank of the completed activity.
+        :param rank_difference: Difference between the rank of the completed activity and the user's rank.
         :return: How much the progress increases.
         """
-        if self.rank >= rank_activity:
+        if rank_activity is None and rank_difference is None:
+            raise ValueError("Either rank_activity or rank_difference should be provided, but none were provided.")
+
+        if rank_activity is not None:
+            if rank_difference is not None:
+                raise ValueError("Either rank_activity or rank_difference should be provided, but both were provided.")
+            rank_difference = self._difference_to_user_rank(rank=rank_activity)
+
+        if rank_difference < 0:
             raise ValueError("Progress acceleration only possible for activities ranked higher than user's rank.")
 
-        difference = self._difference_to_user_rank(rank=rank_activity)
-        return 10 * difference**2
+        return 10 * rank_difference**2

@@ -236,6 +236,26 @@ class TestUser:
 
         assert actual == expected
 
+    def test__progress_increase_with_rank_acceleration_raises_value_error_if_rank_activity_and_rank_difference_are_provided(  # noqa: E501
+        self,
+    ):
+        user = User()
+
+        with pytest.raises(
+            ValueError, match="Either rank_activity or rank_difference should be provided, but both were provided."
+        ):
+            user._progress_increase_with_rank_acceleration(rank_activity=4, rank_difference=2)
+
+    def test__progress_increase_with_rank_acceleration_raises_value_error_if_neither_rank_activity_or_rank_difference_is_provided(  # noqa: E501
+        self,
+    ):
+        user = User()
+
+        with pytest.raises(
+            ValueError, match="Either rank_activity or rank_difference should be provided, but none were provided."
+        ):
+            user._progress_increase_with_rank_acceleration(rank_activity=None, rank_difference=None)
+
     def test__progress_increase_with_rank_acceleration_raises_value_error_if_rank_of_user_is_above_rank_activity(self):
         user = User()
         user.rank = 5
