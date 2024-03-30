@@ -24,27 +24,27 @@ class TestUser:
         with pytest.raises(ValueError, match="Rank must be between -8 and 8"):
             User().rank = 9
 
-    def test_completing_activity_with_same_rank_as_user_adds_3_progress(self):
+    def test_inc_progress_with_same_rank_as_user_adds_3_progress(self):
         user = User()
 
         user.inc_progress(rank_activity=-8)
         assert user.progress == 3
 
-    def test_completing_activity_with_one_rank_lower_as_user_adds_1_progress(self):
+    def test_inc_progress_with_one_rank_lower_as_user_adds_1_progress(self):
         user = User()
         user.rank = -7
 
         user.inc_progress(rank_activity=-8)
         assert user.progress == 1
 
-    def test_completing_activity_with_more_than_one_rank_lower_as_user_adds_no_progress(self):
+    def test_inc_progress_with_more_than_one_rank_lower_as_user_adds_no_progress(self):
         user = User()
         user.rank = -6
 
         user.inc_progress(rank_activity=-8)
         assert user.progress == 0
 
-    def test_completing_activity_with_higher_rank_as_user_adds_accelerated_progress(self):
+    def test_inc_progress_with_higher_rank_as_user_adds_accelerated_progress(self):
         user = User()
         user.rank = 2
         user._progress_increase_with_rank_acceleration = mock.Mock(return_value=42)
