@@ -83,7 +83,9 @@ class User:
     @property
     def max_rank_increases(self) -> int:
         """Number of ranks that the user can still increase. Note that we subtract 1 because 0 is not included."""
-        return self.max_rank - self.rank - 1
+        if self.rank < 0 < self.max_rank:
+            return self.max_rank - self.rank - 1
+        return self.max_rank - self.rank
 
     @property
     def valid_ranks(self) -> list[int]:

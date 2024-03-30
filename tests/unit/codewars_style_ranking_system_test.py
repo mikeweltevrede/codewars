@@ -294,6 +294,7 @@ class TestUseCasesCodewars:
             (1, 20, -1, 1, 21),
             (7, 91, 8, 8, 0),
             (-3, 3, 8, 8, 0),
+            (6, 91, 8, 7, 31),
         ],
     )
     def test_simple_use_cases_provided_by_code_wars_with_custom_progress(
