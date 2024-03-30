@@ -72,3 +72,15 @@ class User:
     def progress(self) -> int:
         """The user's progress within their rank."""
         return self._progress
+
+    @progress.setter
+    def progress(self, value: int) -> None:
+        self._progress = value
+
+    def inc_progress(self, rank_activity: int) -> None:
+        """Increase the progress based on the rank of the activity compared to the user's rank."""
+        if rank_activity == self.rank:
+            self.progress += 3
+
+        elif rank_activity == self.rank - 1:
+            self.progress += 1
