@@ -51,9 +51,13 @@ consistent results no matter what order a set of ranked activities are completed
 
 
 class User:
+    min_rank = -8
+    max_rank = 8
+    max_progress = 100
+
     def __init__(self) -> None:
         """User in a ranking system similar to the one Codewars uses."""
-        self._rank = -8
+        self._rank = self.min_rank
         self._progress = 0
 
     @property
@@ -63,8 +67,8 @@ class User:
 
     @rank.setter
     def rank(self, value: int) -> None:
-        if value not in range(-8, 9) or value == 0:
-            raise ValueError(f"Rank must be between -8 and 8 (0 excluded) but was {value}")
+        if value not in range(self.min_rank, self.max_rank + 1) or value == 0:
+            raise ValueError(f"Rank must be between {self.min_rank} and {self.max_rank} (0 excluded) but was {value}")
 
         self._rank = value
 
@@ -76,6 +80,11 @@ class User:
     @progress.setter
     def progress(self, value: int) -> None:
         self._progress = value
+
+    @property
+    def max_rank_increases(self) -> int:
+        """Number of ranks that the user can still increase."""
+        return self.max_rank - self.rank
 
     def inc_progress(self, rank_activity: int) -> None:
         """Increase the progress based on the rank of the activity compared to the user's rank.
@@ -91,6 +100,22 @@ class User:
             self.progress += 3
         else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
             self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
+
+    def inc_rank(self) -> None:
+        """Increase the rank based on the collected progress."""
+        if self.progress < self.max_progress or self.rank == self.max_rank:
+            # Note that the if-statement about progress can be considered obsolete because the calculations below with
+            # modulus would lead to the same result. However, it is better to exit early.
+            return
+
+        rank_increases, remainder_progress = divmod(self.progress, self.max_progress)
+
+        if rank_increases > self.max_rank_increases:
+            self.progress = remainder_progress + self.max_progress * (rank_increases - self.max_rank_increases)
+            self.rank = self.max_rank
+        else:
+            self.progress = remainder_progress
+            self.rank += rank_increases
 
     def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:
         """Formula to compute rank increase for completion of tasks higher than the user's current rank.

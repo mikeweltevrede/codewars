@@ -52,6 +52,85 @@ class TestUser:
         user.inc_progress(rank_activity=4)
         assert user.progress == 42
 
+    def test_inc_rank_when_progress_is_lower_than_max_progress_does_not_increase_rank(self):
+        user = User()
+        user.rank = 3
+        user.progress = 42
+
+        user.inc_rank()
+        assert user.rank == 3
+
+    def test_inc_rank_when_progress_is_equal_to_max_progress_increase_rank_by_1_if_rank_not_maxed(self):
+        user = User()
+        user.rank = 3
+        user.progress = 100
+
+        user.inc_rank()
+        assert user.rank == 4
+
+    def test_inc_rank_does_not_change_rank_and_progress_if_rank_is_maxed(self):
+        user = User()
+        user.rank = 8
+        user.progress = 100
+
+        user.inc_rank()
+        assert user.rank == 8
+        assert user.progress == 100
+
+    def test_inc_rank_when_progress_is_equal_to_max_progress_resets_progress_to_0(self):
+        user = User()
+        user.rank = 3
+        user.progress = 100
+
+        user.inc_rank()
+        assert user.progress == 0
+
+    def test_inc_rank_when_progress_is_equal_to_max_progress_plus_n_resets_progress_to_n(self):
+        user = User()
+        user.rank = 3
+        user.progress = 142
+
+        user.inc_rank()
+        assert user.progress == 42
+
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_raises_rank_by_multiple_levels_if_it_does_not_make_the_user_reach_max_rank(
+        self,
+    ):  # noqa: E401
+        user = User()
+        user.rank = 3
+        user.progress = 242
+
+        user.inc_rank()
+        assert user.rank == 5
+
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_sets_progress_to_remainder_if_it_does_not_make_the_user_reach_max_rank(
+        self,
+    ):  # noqa: E401
+        user = User()
+        user.rank = 3
+        user.progress = 242
+
+        user.inc_rank()
+        assert user.progress == 42
+
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_raises_rank_till_at_most_max_rank(self):
+        user = User()
+        user.rank = user.max_rank - 2
+        user.progress = 342
+
+        user.inc_rank()
+        assert user.rank == user.max_rank
+
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_keeps_remaining_progress_after_increase(
+        self,
+    ):  # noqa: E401
+        user = User()
+        user.rank = user.max_rank - 2
+        user.progress = 342
+
+        user.inc_rank()
+        assert user.progress == 142
+
     @pytest.mark.parametrize(
         ("rank_user", "rank_activity", "expected"),
         [
