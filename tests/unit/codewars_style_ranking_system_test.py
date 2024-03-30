@@ -101,9 +101,9 @@ class TestUser:
         user.inc_rank()
         assert user.progress == 42
 
-    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_raises_rank_by_multiple_levels_if_it_does_not_make_the_user_reach_max_rank(
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_raises_rank_by_multiple_levels_if_it_does_not_make_the_user_reach_max_rank(  # noqa: E501
         self,
-    ):  # noqa: E501
+    ):
         user = User()
         user.rank = 3
         user.progress = 242
@@ -111,9 +111,9 @@ class TestUser:
         user.inc_rank()
         assert user.rank == 5
 
-    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_sets_progress_to_remainder_if_it_does_not_make_the_user_reach_max_rank(
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_sets_progress_to_remainder_if_it_does_not_make_the_user_reach_max_rank(  # noqa: E501
         self,
-    ):  # noqa: E501
+    ):
         user = User()
         user.rank = 3
         user.progress = 242
@@ -129,9 +129,9 @@ class TestUser:
         user.inc_rank()
         assert user.rank == user.max_rank
 
-    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_keeps_remaining_progress_after_increase(
+    def test_inc_rank_when_progress_exceeds_multiple_of_max_progress_which_raises_rank_till_max_rank_keeps_remaining_progress_after_increase(  # noqa: E501
         self,
-    ):  # noqa: E501
+    ):
         user = User()
         user.rank = user.max_rank - 2
         user.progress = 342
