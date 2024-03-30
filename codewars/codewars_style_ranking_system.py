@@ -53,4 +53,15 @@ consistent results no matter what order a set of ranked activities are completed
 class User:
     def __init__(self) -> None:
         """User in a ranking system similar to the one Codewars uses."""
-        self.rank = -8
+        self._rank = -8
+        self._progress = 0
+
+    @property
+    def rank(self) -> int:
+        """The user's rank in the system."""
+        return self._rank
+
+    @property
+    def progress(self) -> int:
+        """The user's progress within their rank."""
+        return self._progress
