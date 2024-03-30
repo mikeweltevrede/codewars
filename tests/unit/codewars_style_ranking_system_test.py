@@ -60,6 +60,22 @@ class TestUser:
         user.inc_progress(rank_activity=42)
         user.inc_rank.assert_called_once()
 
+    def test_inc_rank_increases_neg1_to_1(self):
+        user = User()
+        user.rank = -1
+        user.progress = user.max_progress
+
+        user.inc_rank()
+        assert user.rank == 1
+
+    def test_inc_rank_increases_neg5_to_5(self):
+        user = User()
+        user.rank = -5
+        user.progress = user.max_progress
+
+        user.inc_rank()
+        assert user.rank == 5
+
     def test_inc_rank_when_progress_is_lower_than_max_progress_does_not_increase_rank(self):
         user = User()
         user.rank = 3

@@ -115,8 +115,13 @@ class User:
         if rank_increases > self.max_rank_increases:
             self.progress = remainder_progress + self.max_progress * (rank_increases - self.max_rank_increases)
             self.rank = self.max_rank
+            return
+
+        self.progress = remainder_progress
+
+        if self.rank + rank_increases == 0:
+            self.rank += rank_increases + 1
         else:
-            self.progress = remainder_progress
             self.rank += rank_increases
 
     def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:
