@@ -102,6 +102,10 @@ class User:
 
         :param rank_activity: Rank of the completed activity.
         """
+        print(f"Start: {self.rank=}, {self.progress=}, {rank_activity=}")
+        if self.rank == self.max_rank:
+            return
+
         self.validate_rank(rank=rank_activity)
 
         rank_difference = self._difference_to_user_rank(rank=rank_activity)
@@ -116,7 +120,9 @@ class User:
         else:  # rank_activity > self.rank - not sure if it is best practice to put else or the conditional
             self.progress += self._progress_increase_with_rank_acceleration(rank_activity=rank_activity)
 
+        print(f"Mid: {self.rank=}, {self.progress=}, {rank_activity=}")
         self.inc_rank()
+        print(f"End: {self.rank=}, {self.progress=}, {rank_activity=}")
 
     def inc_rank(self) -> None:
         """Increase the rank based on the collected progress."""
@@ -131,7 +137,7 @@ class User:
 
         rank_increases, remainder_progress = divmod(self.progress, self.max_progress)
 
-        if rank_increases > self.max_rank_increases:
+        if rank_increases >= self.max_rank_increases:
             self.progress = 0
             self.rank = self.max_rank
             return
@@ -151,9 +157,11 @@ class User:
         """
         difference = rank - self.rank
 
+        # 0 is not a valid rank. As such, if the sign changes, we have to subtract or add 1.
         if self.rank < 0 < rank:
-            # 0 is not a valid rank. As such, if the sign changes, we have to subtract one.
             difference -= 1
+        elif self.rank > 0 > rank:
+            difference += 1
         return difference
 
     def _progress_increase_with_rank_acceleration(self, rank_activity: int) -> int:

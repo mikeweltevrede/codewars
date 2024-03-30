@@ -24,6 +24,13 @@ class TestUser:
         with pytest.raises(ValueError, match="Rank must be in"):
             User().rank = 9
 
+    def test_inc_progress_at_max_rank_does_not_change_progress(self):
+        user = User()
+        user.rank = user.max_rank
+
+        user.inc_progress(rank_activity=8)
+        assert user.progress == 0
+
     def test_inc_progress_with_same_rank_as_user_adds_3_progress(self):
         user = User()
 
@@ -247,6 +254,7 @@ class TestUseCasesCodewars:
             (-8, -7, -8, 10),
             (-8, -5, -8, 90),
             (-8, -4, -7, 60),
+            (8, 8, 8, 0),
         ],
     )
     def test_simple_use_cases_provided_by_code_wars(
@@ -256,6 +264,24 @@ class TestUseCasesCodewars:
         user.rank = rank_user
         user.inc_progress(rank_activity=rank_activity)
 
+        assert user.rank == expected_rank
+        assert user.progress == expected_progress
+
+    @pytest.mark.parametrize(
+        ("rank_user", "progress_user", "rank_activity", "expected_rank", "expected_progress"),
+        [
+            (1, 20, -1, 1, 21),
+            (7, 91, 8, 8, 0),
+        ],
+    )
+    def test_simple_use_cases_provided_by_code_wars_with_custom_progress(
+        self, rank_user: int, progress_user: int, rank_activity: int, expected_rank: int, expected_progress: int
+    ):
+        user = User()
+        user.rank = rank_user
+        user.progress = progress_user
+
+        user.inc_progress(rank_activity)
         assert user.rank == expected_rank
         assert user.progress == expected_progress
 
