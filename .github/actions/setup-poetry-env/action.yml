@@ -36,14 +36,15 @@ runs:
       run: poetry config virtualenvs.in-project true
       shell: bash
 
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v4
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('poetry.lock') }}
+# As of 2024-04-03, running the CI with cached venv does not work. This might have to do with renaming the repo.
+#    - name: Load cached venv
+#      id: cached-poetry-dependencies
+#      uses: actions/cache@v4
+#      with:
+#        path: .venv
+#        key: venv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('poetry.lock') }}
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+#      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction
       shell: bash
