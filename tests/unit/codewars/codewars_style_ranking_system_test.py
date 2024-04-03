@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from codewars.codewars_style_ranking_system import User
+from katas.codewars.codewars_style_ranking_system import User
 
 
 class TestUser:
