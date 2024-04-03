@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "codewars"
+name = "katas"
 version = "0.1.0"
 description = ""
 authors = ["Mike Weltevrede <46759318+mikeweltevrede@users.noreply.github.com>"]
