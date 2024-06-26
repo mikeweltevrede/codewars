@@ -16,6 +16,7 @@ class BookCollection:
         """Add book to the collection.
 
         :param book: A book to add to the collection.
+        :raises KeyError: When the title of the book is already in the collection.
         """
         if (title := book.title) in self.books:
             raise KeyError(f"Book with title '{title}' is already in the collection.")
@@ -27,4 +28,4 @@ class BookCollection:
 
         :param title: Title of the book to remove.
         """
-        self.books = dict(filter(lambda book_title: book_title != title, self.books.keys()))
+        self.books.pop(title, None)

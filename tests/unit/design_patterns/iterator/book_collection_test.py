@@ -32,3 +32,6 @@ class TestBookCollection:
         book_collection.remove_book(title=book.title)
 
         assert book not in book_collection.books.values()
+
+    def test_remove_book_passes_silently_if_book_is_removed_that_is_not_in_the_collection(self, book_collection):
+        book_collection.remove_book(title="FooBar")
