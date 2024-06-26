@@ -10,18 +10,21 @@ from katas.design_patterns.iterator.book import Book
 class BookCollection:
     def __init__(self) -> None:
         """Collection of books."""
-        self.books: list[Book] = []
+        self.books: dict[str, Book] = {}
 
     def add_book(self, book: Book) -> None:
         """Add book to the collection.
 
         :param book: A book to add to the collection.
         """
-        self.books.append(book)
+        if (title := book.title) in self.books:
+            raise KeyError(f"Book with title '{title}' is already in the collection.")
+
+        self.books[title] = book
 
     def remove_book(self, title: str) -> None:
         """Remove a book from the collection by title.
 
         :param title: Title of the book to remove.
         """
-        self.books = list(filter(lambda book: book.title != title, self.books))
+        self.books = dict(filter(lambda book_title: book_title != title, self.books.keys()))
