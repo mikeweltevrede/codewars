@@ -36,4 +36,11 @@ class BookCollection:
 
         :return: Book iterator instance.
         """
+        return self.__iter__()
+
+    def __iter__(self) -> BookIterator:
+        """Return an iterator to traverse the book collection.
+
+        :return: Book iterator instance.
+        """
         return BookIterator(books=list(self.books.values()))

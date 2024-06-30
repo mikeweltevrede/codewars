@@ -39,3 +39,10 @@ class TestBookCollection:
 
     def test_iterator_returns_bookiterator_instance(self, book_collection):
         assert isinstance(book_collection.iterator(), BookIterator)
+
+    def test_can_iterate_over_book_collection_directly(self, book_collection):
+        book_collection.add_book(Book(title="Foo", author="Bar", year=2024))
+        book_collection.add_book(Book(title="Spam", author="Ham", year=2020))
+
+        for _ in book_collection:
+            ...
