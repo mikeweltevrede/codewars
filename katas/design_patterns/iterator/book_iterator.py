@@ -17,12 +17,15 @@ class BookIterator(Iterator):
         :param books: List of books to traverse.
         """
         self.books = books
+        self.index = 0
 
     @override
     def __next__(self) -> Book:
         if not self.has_next():
             raise StopIteration
-        return self.books.pop(0)
+        book = self.books.pop(0)
+        self.index += 1
+        return book
 
     @override
     def has_next(self) -> bool:
