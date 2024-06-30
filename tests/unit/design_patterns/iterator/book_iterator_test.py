@@ -1,3 +1,5 @@
+import pytest
+
 from katas.design_patterns.iterator.book import Book
 from katas.design_patterns.iterator.book_iterator import BookIterator
 
@@ -12,6 +14,10 @@ class TestBookIterator:
         )
 
         assert book_iterator.__next__() == book1
+
+    def test_next_raises_stopiteration_when_there_are_no_books_left(self):
+        with pytest.raises(StopIteration):
+            BookIterator(books=[]).__next__()
 
     def test_has_next_returns_true_if_there_is_one_book_left(self):
         book_iterator = BookIterator(books=[Book(title="Title1", author="Author1", year=2024)])

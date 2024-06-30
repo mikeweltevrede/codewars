@@ -20,6 +20,8 @@ class BookIterator(Iterator):
 
     @override
     def __next__(self) -> Book:
+        if not self.has_next():
+            raise StopIteration
         return self.books.pop(0)
 
     @override
