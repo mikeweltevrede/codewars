@@ -4,7 +4,7 @@
 - The iterator should be able to traverse the `BookCollection` sequentially.
 - The `BookIterator` should keep track of the current position in the collection and provide the next book when requested.
 """
-from typing import override
+from typing import Self, override
 
 from katas.design_patterns.iterator.book import Book
 from katas.design_patterns.iterator.iterator import Iterator
@@ -18,6 +18,10 @@ class BookIterator(Iterator):
         """
         self.books = books
         self.index = 0
+
+    @override
+    def __iter__(self: Self) -> Self:
+        return self
 
     @override
     def __next__(self) -> Book:

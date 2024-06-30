@@ -13,11 +13,11 @@ class TestBookIterator:
             ]
         )
 
-        assert book_iterator.__next__() == book1
+        assert next(book_iterator) == book1
 
     def test_next_raises_stopiteration_when_there_are_no_books_left(self):
         with pytest.raises(StopIteration):
-            BookIterator(books=[]).__next__()
+            next(BookIterator(books=[]))
 
     def test_next_raises_index_attribute(self):
         book_iterator = BookIterator(
@@ -27,7 +27,7 @@ class TestBookIterator:
             ]
         )
 
-        book_iterator.__next__()
+        next(book_iterator)
 
         assert book_iterator.index == 1
 
