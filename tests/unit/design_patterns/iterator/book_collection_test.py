@@ -2,6 +2,7 @@ import pytest
 
 from katas.design_patterns.iterator.book import Book
 from katas.design_patterns.iterator.book_collection import BookCollection
+from katas.design_patterns.iterator.book_iterator import BookIterator
 
 
 class TestBookCollection:
@@ -35,3 +36,6 @@ class TestBookCollection:
 
     def test_remove_book_passes_silently_if_book_is_removed_that_is_not_in_the_collection(self, book_collection):
         book_collection.remove_book(title="FooBar")
+
+    def test_iterator_returns_bookiterator_instance(self, book_collection):
+        assert isinstance(book_collection.iterator(), BookIterator)

@@ -5,6 +5,7 @@
 - Ensure the class can return an iterator object for traversing the collection.
 """
 from katas.design_patterns.iterator.book import Book
+from katas.design_patterns.iterator.book_iterator import BookIterator
 
 
 class BookCollection:
@@ -29,3 +30,10 @@ class BookCollection:
         :param title: Title of the book to remove.
         """
         self.books.pop(title, None)
+
+    def iterator(self) -> BookIterator:
+        """Return an iterator to traverse the book collection.
+
+        :return: Book iterator instance.
+        """
+        return BookIterator(books=list(self.books.values()))
